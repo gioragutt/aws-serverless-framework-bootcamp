@@ -1,8 +1,12 @@
 service:
+  # metadata about our service
   name: auction-service
 
 plugins:
+  # bundle using webpack
   - serverless-bundle
+
+  # interpolate AWS parameters
   - serverless-pseudo-parameters
 
 provider:
@@ -12,9 +16,18 @@ provider:
   stage: ${opt:stage, 'dev'}
   
 functions:
+  # functions are triggered due to events
+  # http is one possible trigger
   hello:
     handler: src/handlers/hello.handler
     events:
       - http:
           method: GET
           path: /hello
+
+custom:
+  # custom is place to provide custom variable,
+  # which can then be used however, f.e plugin conf
+
+  # bundle:
+  #   linting: false
