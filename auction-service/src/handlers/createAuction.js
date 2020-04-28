@@ -1,10 +1,10 @@
-import { v4 as uuid } from 'uuid';
-import AWS from 'aws-sdk';
 import middy from '@middy/core';
-import httpJsonBodyParser from '@middy/http-json-body-parser';
-import httpEventNormalizer from '@middy/http-event-normalizer';
 import httpErrorHandler from '@middy/http-error-handler';
-import {InternalServerError} from 'http-errors';
+import httpEventNormalizer from '@middy/http-event-normalizer';
+import httpJsonBodyParser from '@middy/http-json-body-parser';
+import AWS from 'aws-sdk';
+import { InternalServerError } from 'http-errors';
+import { v4 as uuid } from 'uuid';
 
 const dynamodb = new AWS.DynamoDB.DocumentClient();
 
