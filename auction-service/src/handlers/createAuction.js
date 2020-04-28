@@ -6,7 +6,7 @@ import httpEventNormalizer from '@middy/http-event-normalizer';
 import httpErrorHandler from '@middy/http-error-handler';
 import {InternalServerError} from 'http-errors';
 
-const dynamoDb = new AWS.DynamoDB.DocumentClient();
+const dynamodb = new AWS.DynamoDB.DocumentClient();
 
 async function createAuction(event, context) {
   const { title } = event.body;
@@ -19,12 +19,12 @@ async function createAuction(event, context) {
   };
 
   try {
-    await dynamoDb.put({
+    await dynamodb.put({
       TableName: process.env.AUCTIONS_TABLE_NAME,
       Item: auction,
     }).promise();
   } catch (e) {
-    console.log(e);
+    console.error(e);
     throw new InternalServerError(e);
   }
 
