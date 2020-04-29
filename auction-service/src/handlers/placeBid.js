@@ -1,5 +1,6 @@
 import { Forbidden, InternalServerError } from 'http-errors';
 import commonMiddleware from '../lib/commonMiddleware';
+import { dynamodb, getAuctionById, TableName } from '../lib/db';
 
 async function placeBid(event) {
   const { pathParameters: { id }, body: { amount } } = event;
@@ -12,7 +13,7 @@ async function placeBid(event) {
 
   try {
     const { Attributes: updatedAuction } = await dynamodb.update({
-      TableName: process.env.AUCTIONS_TABLE_NAME,
+      TableName,
       Key: { id },
       UpdateExpression: 'set highestBid.amount = :amount',
       ExpressionAttributeValues: {

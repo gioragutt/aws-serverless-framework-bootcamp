@@ -3,10 +3,31 @@ import { InternalServerError, NotFound } from 'http-errors';
 
 export const dynamodb = new AWS.DynamoDB.DocumentClient();
 
+export const TableName = process.env.AUCTIONS_TABLE_NAME;
+
+export async function getEndedAuctions() {
+  const now = new Date();
+
+  const result = await dynamodb.query({
+    TableName,
+    IndexName: 'statusAndEndDate',
+    KeyConditionExpression: '#status = :status AND endingAt <= :now',
+    ExpressionAttributeValues: {
+      ':status': 'OPEN',
+      ':now': now.toISOString(),
+    },
+    ExpressionAttributeNames: {
+      '#status': 'status', // status is a reserved keyword, so this make it work for runtime
+    }
+  }).promise();
+
+  return result.Items;
+}
+
 export async function createAuction(auction) {
   try {
     return dynamodb.put({
-      TableName: process.env.AUCTIONS_TABLE_NAME,
+      TableName,
       Item: auction,
     }).promise();
   } catch (e) {
@@ -20,7 +41,7 @@ export async function getAuctionById(id) {
 
   try {
     const result = await dynamodb.get({
-      TableName: process.env.AUCTIONS_TABLE_NAME,
+      TableName,
       Key: { id },
     }).promise();
 
