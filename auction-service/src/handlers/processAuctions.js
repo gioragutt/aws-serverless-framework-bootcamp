@@ -1,6 +1,6 @@
 import { InternalServerError } from 'http-errors';
-import { closeAuction } from '../lib/db/closeAuction';
-import { getEndedAuctions } from '../lib/db/getEndedAuctions';
+import { closeAuction } from '../lib/closeAuction';
+import { getEndedAuctions } from '../lib/getEndedAuctions';
 
 async function processAuctions() {
   try {

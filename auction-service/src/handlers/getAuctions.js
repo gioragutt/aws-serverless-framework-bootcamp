@@ -1,6 +1,6 @@
 import { InternalServerError } from 'http-errors';
 import commonMiddleware from '../lib/commonMiddleware';
-import { dynamodb, TableName } from '../lib/db/db';
+import { dynamodb, TableName } from '../lib/db';
 
 async function getAuctions() {
   try {
