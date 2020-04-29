@@ -6,6 +6,7 @@ import { createAuctionSchema } from '../lib/schemas/createAuctionSchema';
 
 async function createAuction(event) {
   const { title } = event.body;
+  const { email } = event.requestContext.authorizer;
 
   const now = new Date();
   const endDate = new Date();
@@ -13,6 +14,7 @@ async function createAuction(event) {
 
   const auction = {
     id: uuid(),
+    seller: email,
     title,
     status: 'OPEN',
     createdAt: now.toISOString(),
