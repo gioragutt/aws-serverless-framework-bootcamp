@@ -1,6 +1,5 @@
 import { Forbidden, InternalServerError } from 'http-errors';
-import commonMiddlware from '../lib/commonMiddleware';
-import { dynamodb, getAuctionById } from '../lib/db';
+import commonMiddleware from '../lib/commonMiddleware';
 
 async function placeBid(event) {
   const { pathParameters: { id }, body: { amount } } = event;
@@ -32,4 +31,4 @@ async function placeBid(event) {
   }
 }
 
-export const handler = commonMiddlware(placeBid);
+export const handler = commonMiddleware(placeBid);

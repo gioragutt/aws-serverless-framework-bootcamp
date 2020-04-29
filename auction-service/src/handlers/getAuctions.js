@@ -1,5 +1,5 @@
 import { InternalServerError } from 'http-errors';
-import commonMiddlware from '../lib/commonMiddleware';
+import commonMiddleware from '../lib/commonMiddleware';
 import { dynamodb } from '../lib/db';
 
 async function getAuctions() {
@@ -18,4 +18,4 @@ async function getAuctions() {
   }
 }
 
-export const handler = commonMiddlware(getAuctions);
+export const handler = commonMiddleware(getAuctions);

@@ -1,5 +1,5 @@
 import { v4 as uuid } from 'uuid';
-import commonMiddlware from '../lib/commonMiddleware';
+import commonMiddleware from '../lib/commonMiddleware';
 import { createAuction as createAuctionInDb } from '../lib/db';
 
 async function createAuction(event) {
@@ -23,4 +23,4 @@ async function createAuction(event) {
   };
 }
 
-export const handler = commonMiddlware(createAuction);
+export const handler = commonMiddleware(createAuction);
