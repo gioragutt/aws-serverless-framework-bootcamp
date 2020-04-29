@@ -1,16 +1,10 @@
-import { BadRequest } from 'http-errors';
+import validator from '@middy/validator';
 import commonMiddleware from '../lib/commonMiddleware';
 import { getAuctionsByStatus } from '../lib/getAuctionsByStatus';
-
-const validStatuses = ['OPEN', 'CLOSED'];
+import { getAuctionsSchema } from '../lib/schemas/getAuctionsSchema';
 
 async function getAuctions(event) {
-  let { status = 'OPEN' } = event.queryStringParameters;
-  status = status.toUpperCase();
-
-  if (!validStatuses.includes(status)) {
-    throw new BadRequest(`Invalid status "${status}"`);
-  }
+  const { status } = event.queryStringParameters;
 
   const auctions = await getAuctionsByStatus(status);
 
@@ -20,4 +14,5 @@ async function getAuctions(event) {
   };
 }
 
-export const handler = commonMiddleware(getAuctions);
+export const handler = commonMiddleware(getAuctions)
+  .use(validator({ inputSchema: getAuctionsSchema, useDefaults: true }));
