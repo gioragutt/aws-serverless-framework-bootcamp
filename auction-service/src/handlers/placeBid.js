@@ -1,7 +1,7 @@
-import { Forbidden, InternalServerError } from 'http-errors';
+import { Forbidden } from 'http-errors';
 import commonMiddleware from '../lib/commonMiddleware';
-import { dynamodb, TableName } from '../lib/db';
 import { getAuctionById } from '../lib/getAuctionById';
+import { updateBidAmount } from '../lib/updatedBidAmount';
 
 async function placeBid(event) {
   const { pathParameters: { id }, body: { amount } } = event;
@@ -12,25 +12,12 @@ async function placeBid(event) {
     throw new Forbidden(`Your bid must be higher than ${auction.highestBid.amount}!`);
   }
 
-  try {
-    const { Attributes: updatedAuction } = await dynamodb.update({
-      TableName,
-      Key: { id },
-      UpdateExpression: 'set highestBid.amount = :amount',
-      ExpressionAttributeValues: {
-        ':amount': amount,
-      },
-      ReturnValues: 'ALL_NEW',
-    }).promise();
+  const updatedAuction = await updateBidAmount(auction, amount);
 
-    return {
-      statusCode: 200,
-      body: JSON.stringify(updatedAuction),
-    };
-  } catch (e) {
-    console.error(e);
-    throw new InternalServerError(e);
-  }
+  return {
+    statusCode: 200,
+    body: JSON.stringify(updatedAuction),
+  };
 }
 
 export const handler = commonMiddleware(placeBid);
