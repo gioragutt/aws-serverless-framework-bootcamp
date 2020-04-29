@@ -1,6 +1,7 @@
 import { Forbidden, InternalServerError } from 'http-errors';
 import commonMiddleware from '../lib/commonMiddleware';
-import { dynamodb, getAuctionById, TableName } from '../lib/db';
+import { dynamodb, TableName } from '../lib/db/db';
+import { getAuctionById } from '../lib/db/getAuctionById';
 
 async function placeBid(event) {
   const { pathParameters: { id }, body: { amount } } = event;

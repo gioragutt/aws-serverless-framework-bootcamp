@@ -1,5 +1,5 @@
-import { getAuctionById } from '../lib/db';
 import commonMiddleware from '../lib/commonMiddleware';
+import { getAuctionById } from '../lib/db/getAuctionById';
 
 async function getAuction(event) {
   const { id } = event.pathParameters;

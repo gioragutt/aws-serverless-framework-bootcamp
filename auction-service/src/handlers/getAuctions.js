@@ -1,11 +1,11 @@
 import { InternalServerError } from 'http-errors';
 import commonMiddleware from '../lib/commonMiddleware';
-import { dynamodb } from '../lib/db';
+import { dynamodb, TableName } from '../lib/db/db';
 
 async function getAuctions() {
   try {
     const { Items: auctions } = await dynamodb.scan({
-      TableName: process.env.AUCTIONS_TABLE_NAME,
+      TableName,
     }).promise();
 
     return {
