@@ -1,6 +1,21 @@
+import AWS from 'aws-sdk';
 import { InternalServerError, NotFound } from 'http-errors';
 
-export async function getAuctionById(dynamodb, id) {
+export const dynamodb = new AWS.DynamoDB.DocumentClient();
+
+export async function createAuction(auction) {
+  try {
+    return dynamodb.put({
+      TableName: process.env.AUCTIONS_TABLE_NAME,
+      Item: auction,
+    }).promise();
+  } catch (e) {
+    console.error(e);
+    throw new InternalServerError(e);
+  }
+}
+
+export async function getAuctionById(id) {
   let auction;
 
   try {

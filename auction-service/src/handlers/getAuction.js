@@ -1,12 +1,9 @@
-import AWS from 'aws-sdk';
-import { getAuctionById } from '../lib/auctions';
+import { getAuctionById } from '../lib/db';
 import commonMiddlware from '../lib/commonMiddleware';
 
-const dynamodb = new AWS.DynamoDB.DocumentClient();
-
-async function getAuction(event, context) {
+async function getAuction(event) {
   const { id } = event.pathParameters;
-  const auction = await getAuctionById(dynamodb, id);
+  const auction = await getAuctionById(id);
 
   return {
     statusCode: 200,

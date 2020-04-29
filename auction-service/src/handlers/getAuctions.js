@@ -1,18 +1,16 @@
-import AWS from 'aws-sdk';
 import { InternalServerError } from 'http-errors';
 import commonMiddlware from '../lib/commonMiddleware';
+import { dynamodb } from '../lib/db';
 
-const dynamodb = new AWS.DynamoDB.DocumentClient();
-
-async function getAuctions(event, context) {
+async function getAuctions() {
   try {
-    const result = await dynamodb.scan({
+    const { Items: auctions } = await dynamodb.scan({
       TableName: process.env.AUCTIONS_TABLE_NAME,
     }).promise();
 
     return {
       statusCode: 200,
-      body: JSON.stringify(result.Items),
+      body: JSON.stringify(auctions),
     };
   } catch (e) {
     console.error(e);

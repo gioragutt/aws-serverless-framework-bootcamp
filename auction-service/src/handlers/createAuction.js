@@ -1,11 +1,8 @@
-import AWS from 'aws-sdk';
-import { InternalServerError } from 'http-errors';
 import { v4 as uuid } from 'uuid';
 import commonMiddlware from '../lib/commonMiddleware';
+import { createAuction as createAuctionInDb } from '../lib/db';
 
-const dynamodb = new AWS.DynamoDB.DocumentClient();
-
-async function createAuction(event, context) {
+async function createAuction(event) {
   const { title } = event.body;
 
   const auction = {
@@ -18,15 +15,7 @@ async function createAuction(event, context) {
     },
   };
 
-  try {
-    await dynamodb.put({
-      TableName: process.env.AUCTIONS_TABLE_NAME,
-      Item: auction,
-    }).promise();
-  } catch (e) {
-    console.error(e);
-    throw new InternalServerError(e);
-  }
+  await createAuctionInDb(auction);
 
   return {
     statusCode: 201,
