@@ -6,7 +6,9 @@ import { placeBidSchema } from '../lib/schemas/placeBidSchema';
 import { updateBidAmount } from '../lib/updatedBidAmount';
 
 async function placeBid(event) {
-  const { pathParameters: { id }, body: { amount } } = event;
+  const { id } = event.pathParameters;
+  const { amount } = event.body;
+  const { email: bidder } = event.requestContext.authorizer;
 
   const auction = await getAuctionById(id);
 
@@ -14,11 +16,19 @@ async function placeBid(event) {
     throw new Forbidden(`You cannot bid on closed auctions!`);
   }
 
+  if (auction.seller === bidder) {
+    throw new Forbidden('You cannot bid on your own auction!');
+  }
+
+  if (auction.highestBid.bidder === bidder) {
+    throw new Forbidden('You are already the highest bidder!');
+  }
+
   if (auction.highestBid.amount >= amount) {
     throw new Forbidden(`Your bid must be higher than ${auction.highestBid.amount}!`);
   }
 
-  const updatedAuction = await updateBidAmount(auction, amount);
+  const updatedAuction = await updateBidAmount(auction, amount, bidder);
 
   return {
     statusCode: 200,
