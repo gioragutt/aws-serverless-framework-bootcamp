@@ -1,21 +1,23 @@
-import { InternalServerError } from 'http-errors';
+import { BadRequest } from 'http-errors';
 import commonMiddleware from '../lib/commonMiddleware';
-import { dynamodb, TableName } from '../lib/db';
+import { getAuctionsByStatus } from '../lib/getAuctionsByStatus';
 
-async function getAuctions() {
-  try {
-    const { Items: auctions } = await dynamodb.scan({
-      TableName,
-    }).promise();
+const validStatuses = ['OPEN', 'CLOSED'];
 
-    return {
-      statusCode: 200,
-      body: JSON.stringify(auctions),
-    };
-  } catch (e) {
-    console.error(e);
-    throw new InternalServerError(e);
+async function getAuctions(event) {
+  let { status = 'OPEN' } = event.queryStringParameters;
+  status = status.toUpperCase();
+
+  if (!validStatuses.includes(status)) {
+    throw new BadRequest(`Invalid status "${status}"`);
   }
+
+  const auctions = await getAuctionsByStatus(status);
+
+  return {
+    statusCode: 200,
+    body: JSON.stringify(auctions),
+  };
 }
 
 export const handler = commonMiddleware(getAuctions);
