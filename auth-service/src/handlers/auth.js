@@ -1,6 +1,15 @@
 import jwt from 'jsonwebtoken';
 
-const generatePolicy = (principalId, Resource) => {
+const createAllowedResource = methodArn => {
+  const stagePart = `/${process.env.STAGE}/`;
+
+  const allEndpointsInGatewayWildcard =
+    `${methodArn.split(stagePart)[0]}${stagePart}*`;
+
+  return allEndpointsInGatewayWildcard;
+};
+
+const generatePolicy = (principalId, methodArn) => {
   return {
     principalId,
     policyDocument: {
@@ -9,7 +18,7 @@ const generatePolicy = (principalId, Resource) => {
         {
           Action: 'execute-api:Invoke',
           Effect: 'Allow',
-          Resource,
+          Resource: createAllowedResource(methodArn),
         },
       ],
     },

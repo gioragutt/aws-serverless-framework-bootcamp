@@ -12,6 +12,7 @@ provider:
   region: eu-west-1
   environment:
     AUTH0_PUBLIC_KEY: ${file(secret.pem)}
+    STAGE: ${self:provider.stage}
 
 functions:
   auth:
