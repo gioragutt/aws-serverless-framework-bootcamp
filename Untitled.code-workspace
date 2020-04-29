@@ -1,0 +1,11 @@
+{
+	"folders": [
+		{
+			"path": "auction-service"
+		},
+		{
+			"path": "auth-service"
+		}
+	],
+	"settings": {}
+}
