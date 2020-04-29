@@ -1,6 +1,8 @@
+import validator from '@middy/validator';
 import { Forbidden } from 'http-errors';
 import commonMiddleware from '../lib/commonMiddleware';
 import { getAuctionById } from '../lib/getAuctionById';
+import { placeBidSchema } from '../lib/schemas/placeBidSchema';
 import { updateBidAmount } from '../lib/updatedBidAmount';
 
 async function placeBid(event) {
@@ -24,4 +26,5 @@ async function placeBid(event) {
   };
 }
 
-export const handler = commonMiddleware(placeBid);
+export const handler = commonMiddleware(placeBid)
+  .use(validator({ inputSchema: placeBidSchema }));
