@@ -1,6 +1,8 @@
+import validator from '@middy/validator';
 import { v4 as uuid } from 'uuid';
 import commonMiddleware from '../lib/commonMiddleware';
 import { createAuction as createAuctionInDb } from '../lib/createAuction';
+import { createAuctionSchema } from '../lib/schemas/createAuctionSchema';
 
 async function createAuction(event) {
   const { title } = event.body;
@@ -28,4 +30,5 @@ async function createAuction(event) {
   };
 }
 
-export const handler = commonMiddleware(createAuction);
+export const handler = commonMiddleware(createAuction)
+  .use(validator({ inputSchema: createAuctionSchema }));
