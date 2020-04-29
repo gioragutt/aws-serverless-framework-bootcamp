@@ -8,6 +8,10 @@ async function placeBid(event) {
 
   const auction = await getAuctionById(id);
 
+  if (auction.status === 'CLOSED') {
+    throw new Forbidden(`You cannot bid on closed auctions!`);
+  }
+
   if (auction.highestBid.amount >= amount) {
     throw new Forbidden(`Your bid must be higher than ${auction.highestBid.amount}!`);
   }
