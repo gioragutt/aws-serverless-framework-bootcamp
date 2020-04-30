@@ -5,6 +5,9 @@
 		},
 		{
 			"path": "auth-service"
+		},
+		{
+			"path": "notification-service"
 		}
 	],
 	"settings": {}
