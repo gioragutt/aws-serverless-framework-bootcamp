@@ -1,5 +1,5 @@
 import AWS from 'aws-sdk';
-import { InternalServerError, BadRequest } from 'http-errors';
+import { BadRequest, InternalServerError } from 'http-errors';
 import { dynamodb, TableName } from './db';
 
 const s3 = new AWS.S3();
@@ -15,26 +15,27 @@ export async function updateAuctionPicture(auction, pictureBase64) {
 }
 
 async function savePictureInS3({ id }, pictureBase64) {
-  const { contentType, imageSuffix, base64Body } =
-    parseBase64(pictureBase64);
+  const { contentType, base64Body } = parseBase64(pictureBase64);
 
   const body = Buffer.from(base64Body, 'base64');
-  const key = `auction/${id}/picture.${imageSuffix}`;
+  const key = `auction/${id}/picture`;
+
+  console.log(`Uploading ${key}, size: ${body.byteLength} bytes`);
 
   try {
-    await s3.putObject({
+    const { Location } = await s3.upload({
       Bucket: bucketName,
       Key: key,
       Body: body,
       ContentEncoding: 'base64',
       ContentType: contentType,
     }).promise();
+
+    return Location;
   } catch (e) {
     console.error(e);
     throw new InternalServerError(e);
   }
-
-  return `http://${bucketName}.s3.amazonaws.com/${key}`;
 }
 
 async function updatePictureUrl({ id }, pictureUrl) {
@@ -58,14 +59,12 @@ async function updatePictureUrl({ id }, pictureUrl) {
 
 function parseBase64(base64) {
   // base64 = data:<content type>;base64,<base 64 body>
-  // content type = images/<image suffix>
   const [metadata, base64Body] = base64.split(';base64,', 2);
   const contentType = metadata.split(':')[1];
-  const imageSuffix = contentType.split('/')[1];
 
-  if (!contentType || !imageSuffix || !base64Body) {
+  if (!contentType || !base64Body) {
     throw new BadRequest('Invalid picture');
   }
 
-  return { base64Body, contentType, imageSuffix };
+  return { base64Body, contentType };
 }
